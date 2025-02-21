@@ -340,7 +340,7 @@ with the cleaned data:
      - pandas=2.1.3
      - pip:
          - mlflow==2.8.1
-         - wandb==0.16.0
+         - wandb==0.17.2
    ```
    
 4. Add the ``basic_cleaning`` step to the pipeline (the ``main.py`` file):
