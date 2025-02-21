@@ -7,6 +7,18 @@ main:
   steps: all
 etl:
   sample: "sample1.csv"
+  sample_latest: "sample.csv:latest"
+  sample_type: "raw_data"
+  clean_sample: "clean_sample.csv"
+  clean_sample_latest: "clean_sample.csv:latest"
+  clean_sample_reference: "clean_sample.csv:reference"
+  clean_sample_type: "clean_sample"
+  artifact_description: "Raw file as downloaded"
+  output_description: "Data with outliers and null values removed"
+  trainval_artifact_latest: "trainval_data.csv:latest"
+  output_artifact: "random_forest_export"
+  output_artifact_prod: "random_forest_export:prod"
+  test_dataset: "test_data.csv:latest"
   min_price: 10 # dollars
   max_price: 350 # dollars
 data_check:

@@ -46,9 +46,9 @@ def go(config: DictConfig):
                 env_manager="conda",
                 parameters={
                     "sample": config["etl"]["sample"],
-                    "artifact_name": "sample.csv",
-                    "artifact_type": "raw_data",
-                    "artifact_description": "Raw file as downloaded"
+                    "artifact_name": config['etl']['sample'],
+                    "artifact_type": config['etl']['sample_type'],
+                    "artifact_description": config['etl']['artifact_description']
                 },
             )
 
@@ -57,10 +57,10 @@ def go(config: DictConfig):
                  os.path.join(hydra.utils.get_original_cwd(), "src", "basic_cleaning"),
                  "main",
                  parameters={
-                     "input_artifact": "sample.csv:latest",
-                     "output_artifact": "clean_sample.csv",
-                     "output_type": "clean_sample",
-                     "output_description": "Data with outliers and null values removed",
+                     "input_artifact": config['etl']['sample_latest'],
+                     "output_artifact": config['etl']['clean_sample'],
+                     "output_type": config['etl']['clean_sample_type'],
+                     "output_description": config['etl']['output_description'],
                      "min_price": config['etl']['min_price'],
                      "max_price": config['etl']['max_price']
                  },
@@ -71,8 +71,8 @@ def go(config: DictConfig):
                  os.path.join(hydra.utils.get_original_cwd(), "src", "data_check"),
                  "main",
                  parameters={
-                     "csv": "clean_sample.csv:latest",
-                     "ref": "clean_sample.csv:reference",
+                     "csv": config['etl']['clean_sample_latest'],
+                     "ref": config['etl']['clean_sample_reference'],
                      "kl_threshold": config["data_check"]["kl_threshold"],
                      "min_price": config['etl']['min_price'],
                      "max_price": config['etl']['max_price'],
@@ -84,7 +84,7 @@ def go(config: DictConfig):
                  f"{config['main']['components_repository']}/train_val_test_split",
                  "main",
                  parameters={
-                     "input": "clean_sample.csv:latest",
+                     "input": config['etl']['clean_sample_latest'],
                      "test_size": config['modeling']['test_size'],
                      "random_seed": config['modeling']['random_seed'],
                      "stratify_by": config['modeling']['stratify_by'],
@@ -105,13 +105,13 @@ def go(config: DictConfig):
                  os.path.join(hydra.utils.get_original_cwd(), "src", "train_random_forest"),
                  "main",
                  parameters={
-                     "trainval_artifact": "trainval_data.csv:latest",                # OK --trainval_artifact {trainval_artifact} \
+                     "trainval_artifact": config['etl']['trainval_artifact_latest'], # OK --trainval_artifact {trainval_artifact} \
                      "val_size": config['modeling']['val_size'],                     # OK --val_size {val_size} \
                      "random_seed": config['modeling']['random_seed'],               # OK --random_seed {random_seed} \
                      "stratify_by": config['modeling']['stratify_by'],               # OK --stratify_by {stratify_by} \
                      "rf_config": rf_config,                                         # OK --rf_config {rf_config} \
                      "max_tfidf_features": config['modeling']['max_tfidf_features'], # OK --max_tfidf_features {max_tfidf_features} \
-                     "output_artifact": "random_forest_export",                      # OK --output_artifact {output_artifact}
+                     "output_artifact": config['etl']['output_artifact'],            # OK --output_artifact {output_artifact}
                  },
              )
 
@@ -120,8 +120,8 @@ def go(config: DictConfig):
                  f"{config['main']['components_repository']}/test_regression_model",
                  "main",
                  parameters={
-                     "mlflow_model": "random_forest_export:prod",
-                     "test_dataset": "test_data.csv:latest",
+                     "mlflow_model": config['etl']['output_artifact_prod'],
+                     "test_dataset": config['etl']['test_dataset'],
                  },
              )
 
